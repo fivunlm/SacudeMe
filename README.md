@@ -1,4 +1,7 @@
 SacudeMe
 ========
 
-Trabajo Practico N1 de Sistemas Operativos Avanzado 2014
+Trabajo Practico Nº1 
+
+Catedra: Sistemas Operativos Avanzados 
+Año: 2014
