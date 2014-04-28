@@ -1,20 +1,16 @@
 package ar.edu.unlam.soa.sacudeme;
 
 import android.app.Activity;
-import android.app.ActionBar;
-import android.app.Fragment;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
-import android.os.Build;
 
 public class MainActivity extends Activity implements SensorEventListener {
 
@@ -26,27 +22,21 @@ public class MainActivity extends Activity implements SensorEventListener {
 	private float mLastX, mLastY, mLastZ;
 	private boolean mInitialized = false;
 	private float NOISE = 2;
+	Button b1;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-
-		if (savedInstanceState == null) {
-			getFragmentManager().beginTransaction()
-					.add(R.id.container, new PlaceholderFragment()).commit();
-		}
+		setContentView(R.layout.fragment_main);
 
 		mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-		mAccelerometer = mSensorManager
-				.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
-		mSensorManager.registerListener(this, mAccelerometer,
-				SensorManager.SENSOR_DELAY_NORMAL);
+		mSensorManager.registerListener(this, mAccelerometer,SensorManager.SENSOR_DELAY_NORMAL);
 
 		
 	}
-
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -67,22 +57,6 @@ public class MainActivity extends Activity implements SensorEventListener {
 		return super.onOptionsItemSelected(item);
 	}
 
-	/**
-	 * A placeholder fragment containing a simple view.
-	 */
-	public static class PlaceholderFragment extends Fragment {
-
-		public PlaceholderFragment() {
-		}
-
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_main, container,
-					false);
-			return rootView;
-		}
-	}
 
 	@Override
 	protected void onResume() {
@@ -126,6 +100,8 @@ public class MainActivity extends Activity implements SensorEventListener {
 			float deltaZ = Math.abs(mLastZ - z);
 			if (deltaX < NOISE)
 				deltaX = (float) 0.0;
+			else
+				startSecondActivity(1);
 			if (deltaY < NOISE)
 				deltaY = (float) 0.0;
 			if (deltaZ < NOISE)
@@ -138,6 +114,12 @@ public class MainActivity extends Activity implements SensorEventListener {
 			mTxtZ.setText(Float.toString(deltaZ));
 			
 		}
+	}
+	
+	private void startSecondActivity(int buttonNum) {
+		Intent intent = new Intent(this, SecondActivity.class);
+		intent.putExtra("BUTTON NUMBER", buttonNum);
+		startActivity(intent);
 	}
 }
 
