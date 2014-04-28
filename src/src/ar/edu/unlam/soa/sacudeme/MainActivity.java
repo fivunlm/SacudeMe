@@ -112,7 +112,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 			}
 			if (deltaZ < NOISE)
 				deltaZ = (float) 0.0;
-			else if (deltaX < NOISE && deltaZ < NOISE) {
+			else if (deltaX < NOISE && deltaY < NOISE) {
 				startSecondActivity(3);
 				mInitialized = false;
 			}
