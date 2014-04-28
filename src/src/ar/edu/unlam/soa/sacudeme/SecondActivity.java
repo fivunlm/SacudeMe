@@ -10,17 +10,22 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class SecondActivity extends Activity {
 
 	private MediaPlayer mPlayer;
 	private int currentSong = 0;
+	Button b5;
+	int seg = 0;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.fragment_second);
+		b5 = (Button) findViewById(R.id.button5);
 		
 		Intent intent = getIntent();
 		int number = intent.getIntExtra("BUTTON NUMBER", 1);
@@ -32,6 +37,20 @@ public class SecondActivity extends Activity {
 			mPlayer = MediaPlayer.create(SecondActivity.this, R.raw.song1);
 			currentSong = R.raw.song1;
 			mPlayer.start();
+		}
+		
+		b5.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				seg = mPlayer.getCurrentPosition();
+				mPlayer.pause();
+			}
+		});
+	}
+	
+	protected void onPause() {
+		super.onPause();
+		if (mPlayer.isPlaying()) {
+			mPlayer.pause();
 		}
 	}
 	
