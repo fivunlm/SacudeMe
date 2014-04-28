@@ -21,7 +21,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 	private TextView mTxtZ = null;
 	private float mLastX, mLastY, mLastZ;
 	private boolean mInitialized = false;
-	private float NOISE = 2;
+	private float NOISE = 3;
 	Button b1;
 
 	@Override
@@ -100,12 +100,22 @@ public class MainActivity extends Activity implements SensorEventListener {
 			float deltaZ = Math.abs(mLastZ - z);
 			if (deltaX < NOISE)
 				deltaX = (float) 0.0;
-			else
+			else if (deltaY < NOISE && deltaZ < NOISE) {
 				startSecondActivity(1);
+				mInitialized = false;
+			}
 			if (deltaY < NOISE)
 				deltaY = (float) 0.0;
+			else if (deltaX < NOISE && deltaZ < NOISE) {
+				startSecondActivity(2);
+				mInitialized = false;
+			}
 			if (deltaZ < NOISE)
 				deltaZ = (float) 0.0;
+			else if (deltaX < NOISE && deltaZ < NOISE) {
+				startSecondActivity(3);
+				mInitialized = false;
+			}
 			mLastX = x;
 			mLastY = y;
 			mLastZ = z;

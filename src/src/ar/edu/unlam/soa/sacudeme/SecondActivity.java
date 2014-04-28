@@ -34,8 +34,16 @@ public class SecondActivity extends Activity {
 		tv.setText(String.valueOf(number));
 		
 		if (number == 1) {
-			mPlayer = MediaPlayer.create(SecondActivity.this, R.raw.song1);
-			currentSong = R.raw.song1;
+			mPlayer = MediaPlayer.create(SecondActivity.this, R.raw.sonido2);
+			currentSong = R.raw.sonido2;
+			mPlayer.start();
+		} else if (number == 2) {
+			mPlayer = MediaPlayer.create(SecondActivity.this, R.raw.sonido3);
+			currentSong = R.raw.sonido3;
+			mPlayer.start();
+		} else if (number == 3) {
+			mPlayer = MediaPlayer.create(SecondActivity.this, R.raw.sonido4);
+			currentSong = R.raw.sonido4;
 			mPlayer.start();
 		}
 		
