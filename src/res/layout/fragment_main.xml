@@ -91,5 +91,11 @@
                 android:layout_height="48dp"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
     </LinearLayout>
+
+    <Button
+        android:id="@+id/buttonStop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Stop" />
     
 </LinearLayout>

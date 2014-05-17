@@ -15,12 +15,15 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends Activity implements SensorEventListener, OnSeekBarChangeListener {
+public class MainActivity extends Activity implements SensorEventListener, OnSeekBarChangeListener, OnClickListener {
 
 	private SensorManager mSensorManager = null;
 	private Sensor mAccelerometer = null;
@@ -82,7 +85,13 @@ public class MainActivity extends Activity implements SensorEventListener, OnSee
 		mSeekBarSernsibility = (SeekBar) findViewById(R.id.seekBarSensibility);
 		mSeekBarSernsibility.setOnSeekBarChangeListener(this);
 		mTxtMsg = (TextView) findViewById(R.id.txtMsg);
+		
+		mSensibility = 15f;
+		mSeekBarSernsibility.setProgress(0);		
 		mTxtMsg.setText(String.format("%.2f ", mSensibility));
+		
+		Button buttonStop = (Button) findViewById(R.id.buttonStop);
+		buttonStop.setOnClickListener(this);
 	}
 
 
@@ -204,6 +213,12 @@ public class MainActivity extends Activity implements SensorEventListener, OnSee
 	public void onStopTrackingTouch(SeekBar seekBar) {
 		// TODO Auto-generated method stub
 		
+	}
+
+
+	@Override
+	public void onClick(View v) {
+		mSoundPool.stop(mStreamID);
 	}
 
 }
