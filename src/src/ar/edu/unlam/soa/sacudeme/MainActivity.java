@@ -7,35 +7,35 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Button;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends Activity implements SensorEventListener {
+public class MainActivity extends Activity implements SensorEventListener, OnSeekBarChangeListener {
 
 	private SensorManager mSensorManager = null;
 	private Sensor mAccelerometer = null;
 	private TextView mTxtX = null;
 	private TextView mTxtY = null;
 	private TextView mTxtZ = null;
-	private float mLastX, mLastY, mLastZ;
-	private boolean mInitialized = false;
-	private float NOISE = 2f;
+	private TextView mTxtMsg = null;
+	private SeekBar  mSeekBarSernsibility = null;
+	
+	private float mSensibility = 2f;
 	private SoundPool mSoundPool;
 	private Map<Integer,Integer> mSoundPoolMap = new HashMap<Integer, Integer>();
 	private int mStreamID;
+	
+	private static String TAG = "MainActivity";
 	
 	private class Tuple {
 		private float mFirst;
@@ -78,26 +78,11 @@ public class MainActivity extends Activity implements SensorEventListener {
 		mSoundPoolMap.put(1, mSoundPool.load(this, R.raw.sonido2, 1));
 		mSoundPoolMap.put(2, mSoundPool.load(this, R.raw.sonido3, 1));
 		mSoundPoolMap.put(3, mSoundPool.load(this, R.raw.sonido4, 1));
-	}
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
+		
+		mSeekBarSernsibility = (SeekBar) findViewById(R.id.seekBarSensibility);
+		mSeekBarSernsibility.setOnSeekBarChangeListener(this);
+		mTxtMsg = (TextView) findViewById(R.id.txtMsg);
+		mTxtMsg.setText(String.format("%.2f ", mSensibility));
 	}
 
 
@@ -123,15 +108,13 @@ public class MainActivity extends Activity implements SensorEventListener {
 	@Override
 	public void onSensorChanged(SensorEvent event) {
 				
-		Log.i("SACU", "Sensor Changed");
 		mTxtX = (TextView) findViewById(R.id.txtX);
 		mTxtY = (TextView) findViewById(R.id.txtY);
 		mTxtZ = (TextView) findViewById(R.id.txtZ);
-		TextView txtMsg = (TextView) findViewById(R.id.txtMsg);
 		
-		float x = event.values[0] > NOISE ? event.values[0] : 0;
-		float y = event.values[1] > NOISE ? event.values[1] : 0;
-		float z = event.values[2] > NOISE ? event.values[2] : 0;
+		float x = event.values[0] > mSensibility ? event.values[0] : 0;
+		float y = event.values[1] > mSensibility ? event.values[1] : 0;
+		float z = event.values[2] > mSensibility ? event.values[2] : 0;
 		
 		// The phone stopped, check kind of movement 
 		if( x == 0 && y == 0 && z == 0){
@@ -141,7 +124,6 @@ public class MainActivity extends Activity implements SensorEventListener {
 			}
 		}
 		else {
-			Log.i("SACU", "Adding");
 			mMotion.add(new Tuple(x, y, z));
 		}
 		
@@ -162,8 +144,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         int no_loop = 0;
         float normal_playback_rate = 1f;
 		
-		Log.i("SACU", "---------------------------------------------------");
-		TextView txtMsg = (TextView) findViewById(R.id.txtMsg);
+		Log.d(TAG, "---------------------------------------------------");
 		int xC = 0;
 		int yC = 0;
 		int zC = 0;
@@ -172,7 +153,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 		float z = 0;
 		
 		for(Tuple tuple : mMotion){
-			Log.i("SACU", String.format("(%f,%f,%f)", tuple.getFirst(), tuple.getSecond(), tuple.getThird()));
+			Log.d(TAG, String.format("(%f,%f,%f)", tuple.getFirst(), tuple.getSecond(), tuple.getThird()));
 			x = tuple.getFirst();
 			y = tuple.getSecond();
 			z = tuple.getThird();
@@ -186,24 +167,43 @@ public class MainActivity extends Activity implements SensorEventListener {
 		}
 		
 		if( xC > yC && xC > zC ){
-			Log.i("SACU", "EN X");
+			Log.d(TAG, "EN X");
 			Toast.makeText(getApplicationContext(), "EN X", Toast.LENGTH_SHORT).show();
 			mSoundPool.stop(mStreamID);
 			mStreamID = mSoundPool.play(mSoundPoolMap.get(1), leftVolume, rightVolume, priority, no_loop, normal_playback_rate);
 		}
 		if( yC > xC && yC > zC ){
-			Log.i("SACU", "EN Y");
+			Log.d(TAG, "EN Y");
 			Toast.makeText(getApplicationContext(), "EN Y", Toast.LENGTH_SHORT).show();
 			mSoundPool.stop(mStreamID);
 			mStreamID = mSoundPool.play(mSoundPoolMap.get(2), leftVolume, rightVolume, priority, no_loop, normal_playback_rate);
 		}
 		if( zC > yC && zC > xC ){
-			Log.i("SACU", "EN Z");
+			Log.d(TAG, "EN Z");
 			Toast.makeText(getApplicationContext(), "EN Z", Toast.LENGTH_SHORT).show();
 			mSoundPool.stop(mStreamID);
 			mStreamID = mSoundPool.play(mSoundPoolMap.get(3), leftVolume, rightVolume, priority, no_loop, normal_playback_rate);
 		}
-		Log.i("SACU", "---------------------------------------------------");
+		Log.d(TAG, "---------------------------------------------------");
+	}
+
+	@Override
+	public void onProgressChanged(SeekBar seekBar, int progress,
+			boolean fromUser) {
+		mSensibility =  (float) seekBar.getMax() - progress;
+		mTxtMsg.setText(String.format("%.2f ", mSensibility));
+	}
+
+	@Override
+	public void onStartTrackingTouch(SeekBar seekBar) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onStopTrackingTouch(SeekBar seekBar) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
